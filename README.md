@@ -1,78 +1,137 @@
-# Movie Explorer (JavaScript)
+# Movie Explorer
 
-A simple Movie Explorer prototype built with **Next.js** and **plain JavaScript**.
+A lightweight Movie Explorer application built with Next.js that allows users to search for movies, view details, and save favorites with personal ratings and notes. Written by Bilal Akhter as a take home assignment for a Software Engineer position at Ring Savvy. 
+
 
 ## Features
 
 - Search movies by title
-- View movie details in a modal
-- Add/remove favorites
-- Save a personal rating (1–5) and note for each favorite
-- Persist favorites in LocalStorage
-- Keep the TMDB API token server-side through Next.js route handlers
-- Handle empty states and API errors
+- View movie details (poster, overview, runtime, release year)
+- Save/remove movies to a personal list
+- Add a rating (1–5) and notes to favorited movies
+- Persist saved movies using LocalStorage
+- Server-side proxy for external API (TMDB)
 
-## Tech Decisions & Tradeoffs
 
-- **Next.js App Router** keeps the frontend and backend proxy in one project.
-- **Route handlers** protect the TMDB token so it never reaches browser code.
-- **Plain JavaScript instead of TypeScript** was chosen to move faster and keep the solution easy to explain in a short take-home window.
-- **LocalStorage** was chosen over a database to satisfy persistence with minimal complexity.
+## Tech Stack
+
+- Frontend: Next.js (App Router), React (JavaScript)
+- Backend: Next.js Route Handlers
+- Persistence: LocalStorage (client-side)
+- External API: TMDB
+
 
 ## Setup
 
 1. Install dependencies:
 
-```bash
 npm install
-```
 
-2. Create a `.env.local` file in the project root:
+2. Update the `.env` file in the root:
 
-```bash
 TMDB_API_TOKEN=your_tmdb_bearer_token_here
-```
 
-3. Start the app:
+- Use the TMDB `API Read Access Token` found under User Profile Settings > API.
 
-```bash
+3. Start the development server:
+
 npm run dev
-```
 
 4. Open:
 
-```text
 http://localhost:3000
-```
 
-## Getting a TMDB Token
 
-1. Create a TMDB account
-2. Generate a Bearer Token
-3. Put it in `.env.local` as `TMDB_API_TOKEN`
+## Technical Decisions & Tradeoffs
 
-## Deployment
+### Next.js (Full-Stack Approach)
 
-This app is ready to deploy to Vercel.
+I used Next.js App Router to keep both frontend and backend logic in a single project. This simplifies development and deployment, while still allowing a clear separation of concerns.
 
-- Add the same `TMDB_API_TOKEN` environment variable in your hosting provider
-- Deploy the repo or folder
-- Add the hosted link below after deployment
+Route handlers act as a lightweight backend layer, similar to controllers in a traditional .NET application.
 
-Hosted app link: `ADD_YOUR_LINK_HERE`
+
+### API Proxy for TMDB
+
+The TMDB API is accessed through Next.js API routes instead of directly from the browser.
+
+Why:
+- Prevents exposing the API key to the client
+- Centralizes external API logic
+- Allows normalization of responses before they reach the UI
+
+
+### Data Normalization Layer
+
+TMDB responses are mapped into a simplified internal shape before being used in components.
+
+Why:
+- Prevents UI from depending on third-party field names
+- Makes components easier to reason about
+
+
+### State Management (React Hooks)
+
+State is managed locally using React hooks and a custom useFavorites hook.
+
+Why:
+- Keeps the solution simple and easy to follow
+- Avoids introducing unnecessary complexity
+- Appropriate for the size and scope of the application
+
+
+### LocalStorage for Persistence
+
+Favorites (including rating and notes) are stored in LocalStorage.
+
+Why:
+- Meets persistence requirements without backend complexity
+- Keeps the app self-contained for a short take-home
+- Fast to implement and easy to reason about
+
+Tradeoff:
+- Data is not shared across devices or sessions beyond the browser
+
+
+### UI Simplicity Over Polish
+
+The UI is intentionally minimal, focusing on clarity and usability over visual design.
+
+Why:
+- Prioritized functionality within the time constraint and avoiding over-engineering
+- Ensured a complete, working user flow instead of partial features
+
+
+### Explicit Loading and Error States
+
+The app explicitly handles:
+- Empty search input
+- No results found
+- API/network failures
+- Loading states for both search and details
+
 
 ## Known Limitations
 
-- No server-side favorites persistence
-- No pagination
-- No debounced search
-- Minimal styling
+- No server-side persistence (favorites are browser-only)
+- No pagination or infinite scroll for search results
+- Search is triggered on submit
+- Minimal accessibility considerations
+- Not mobile friendly
 - No automated tests
 
-## What I’d Improve With More Time
 
-- Add search debouncing and pagination
-- Add server-side persistence with SQLite or Postgres
-- Improve accessibility and keyboard support
-- Add tests for API routes and LocalStorage behavior
-- Add loading skeletons and more refined UI polish
+## Potential Future Improvements
+
+- Add server-side persistence
+- Implement search debouncing and pagination
+- Improve accessibility (keyboard navigation, ARIA roles)
+- Introduce basic test coverage for API routes and hooks
+- Enhance UI polish and responsiveness
+- Mobile friendly UI
+
+---
+
+## Summary
+
+This project focuses on delivering a complete, functional vertical slice within a constrained time frame. The architecture keeps concerns separated while remaining simple, with deliberate tradeoffs to avoid over-engineering.
